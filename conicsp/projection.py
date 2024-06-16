@@ -22,12 +22,12 @@ class Point:
 
     @property
     def omega(self) -> float:
-        omega_0 = 0.0
+        omega = 0.0
         if self.z != 0:
-            omega_0 = sgn(self.z)*acos(self.y/sqrt(self.y**2+self.z**2))
+            omega = sgn(self.z)*acos(self.y/sqrt(self.y**2+self.z**2))
         else:
-            omega_0 = -pi if self.y < 0 else 0
-        return omega_0 + 2*pi*self.rev
+            omega = -pi if self.y < 0 else 0
+        return omega + 2*pi*self.rev
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Point):
@@ -53,7 +53,7 @@ class Projector:
     def lambda_(self) -> float:
         return self._lambda
 
-    def point(self, point: Point, base: float = 0) -> list[Point]:
+    def point(self, point: Point, base: float = 0, limit: bool = False) -> list[Point]:
         point1 = rot(point, -base, rev_=False)
         omega = point1.omega
         point_1a = rot(point1, -omega)
