@@ -1,7 +1,92 @@
 import unittest
-from math import pi, tan
+from math import pi, tan, sqrt
 
 import conicsp
+from conicsp import Point, rot
+
+
+class Test_Omega(unittest.TestCase):
+
+    def test_omega_with_zero_revolutions(self):
+        self.assertAlmostEqual(Point(0,0,0).omega, 0)
+        self.assertAlmostEqual(Point(1,0,0).omega, 0)
+        self.assertAlmostEqual(Point(-1,0,0).omega, 0)
+        self.assertAlmostEqual(Point(0,1,0).omega, 0)
+        self.assertAlmostEqual(Point(0,-1,0).omega, -pi)
+        self.assertAlmostEqual(Point(0,0,1).omega, pi/2)
+        self.assertAlmostEqual(Point(0,0,-1).omega, -pi/2)
+        self.assertAlmostEqual(Point(0,1,1).omega, pi/4)
+        self.assertAlmostEqual(Point(0,-1,1).omega, 3*pi/4)
+        self.assertAlmostEqual(Point(0,1,-1).omega, -pi/4)
+        self.assertAlmostEqual(Point(0,-1,-1).omega, -3*pi/4)
+        self.assertAlmostEqual(Point(1,0,1).omega, pi/2)
+        self.assertAlmostEqual(Point(1,0,-1).omega, -pi/2)
+        self.assertAlmostEqual(Point(1,1,0).omega, 0)
+        self.assertAlmostEqual(Point(1,-1,0).omega, -pi)
+
+    def test_omega_with_revolutions_equal_to_one(self):
+        self.assertAlmostEqual(Point(0,0,0,1).omega, 2*pi)
+        self.assertAlmostEqual(Point(1,0,0,1).omega, 2*pi)
+        self.assertAlmostEqual(Point(-1,0,0,1).omega, 2*pi)
+        self.assertAlmostEqual(Point(0,1,0,1).omega, 2*pi)
+        self.assertAlmostEqual(Point(0,-1,0,1).omega, pi)
+        self.assertAlmostEqual(Point(0,0,1,1).omega, 5*pi/2)
+        self.assertAlmostEqual(Point(0,0,-1,1).omega, 3*pi/2)
+        self.assertAlmostEqual(Point(0,1,1,1).omega, 9*pi/4)
+        self.assertAlmostEqual(Point(0,-1,1,1).omega, 11*pi/4)
+        self.assertAlmostEqual(Point(0,1,-1,1).omega, 7*pi/4, 5)
+        self.assertAlmostEqual(Point(0,-1,-1,1).omega, 5*pi/4)
+        self.assertAlmostEqual(Point(1,0,1,1).omega, 5*pi/2)
+        self.assertAlmostEqual(Point(1,0,-1,1).omega, 3*pi/2)
+        self.assertAlmostEqual(Point(1,1,0,1).omega, 2*pi)
+        self.assertAlmostEqual(Point(1,-1,0,1).omega, pi)
+
+    def test_omega_with_revolutions_equal_to_minus_one(self):
+        self.assertAlmostEqual(Point(0,0,0,-1).omega, -2*pi)
+        self.assertAlmostEqual(Point(1,0,0,-1).omega, -2*pi)
+        self.assertAlmostEqual(Point(-1,0,0,-1).omega, -2*pi)
+        self.assertAlmostEqual(Point(0,1,0,-1).omega, -2*pi)
+        self.assertAlmostEqual(Point(0,-1,0,-1).omega, -3*pi)
+        self.assertAlmostEqual(Point(0,0,1,-1).omega, -3*pi/2)
+        self.assertAlmostEqual(Point(0,0,-1,-1).omega, -5*pi/2)
+        self.assertAlmostEqual(Point(0,1,1,-1).omega, -7*pi/4)
+        self.assertAlmostEqual(Point(0,-1,1,-1).omega, -5*pi/4)
+        self.assertAlmostEqual(Point(0,1,-1,-1).omega, -9*pi/4, 5)
+        self.assertAlmostEqual(Point(0,-1,-1,-1).omega, -11*pi/4)
+        self.assertAlmostEqual(Point(1,0,1,-1).omega, -3*pi/2)
+        self.assertAlmostEqual(Point(1,0,-1,-1).omega, -5*pi/2)
+        self.assertAlmostEqual(Point(1,1,0,-1).omega, -2*pi)
+        self.assertAlmostEqual(Point(1,-1,0,-1).omega, -3*pi)
+
+
+class Test_Point_Rotation(unittest.TestCase):
+
+    def test_rotating_origin_has_no_effect(self):
+        x = Point(0,0,0)
+        self.assertEqual(rot(x, 0).xyz, (0,0,0))
+        self.assertEqual(rot(x, pi/2).xyz, (0,0,0))
+        self.assertEqual(rot(x, -pi/2).xyz, (0,0,0))
+
+    def test_rotating_point_with_zero_y_and_z_has_no_effect(self):
+        x = Point(1,0,0)
+        self.assertEqual(rot(x, 0).xyz, (1,0,0))
+        self.assertEqual(rot(x, pi/2).xyz, (1,0,0))
+        self.assertEqual(rot(x, -pi/2).xyz, (1,0,0))
+
+    def test_rotating_point_without_increasing_revolutions(self):
+        self.assertEqual(rot(Point(0,0,1), pi/4), Point(0,-1/sqrt(2),1/sqrt(2)))
+        self.assertEqual(rot(Point(0,1,0), pi/2), Point(0,0,1))
+        self.assertEqual(rot(Point(0,1,1), pi/2), Point(0,-1,1))
+        self.assertEqual(rot(Point(0,1,1), -pi), Point(0,-1,-1))
+        self.assertEqual(rot(Point(0,1,0), -pi), Point(0,-1,0))
+
+    def test_rotating_point_with_changing_revolutions(self):
+        self.assertEqual(rot(Point(0,1,0), pi), Point(0,-1,0,1))
+        self.assertEqual(rot(Point(0,1,0), 3*pi), Point(0,-1,0,2))
+        self.assertEqual(rot(Point(0,1,0), -3*pi), Point(0,-1,0,-1))
+        self.assertEqual(rot(Point(0,0,1), pi), Point(0,0,-1,1))
+        self.assertEqual(rot(Point(0,0,-1), 3*pi), Point(0,0,1,1))
+        self.assertEqual(rot(Point(0,0,-1), -pi), Point(0,0,1,-1))
 
 
 class Test_Kappa_For_Lambda_One(unittest.TestCase):
@@ -75,6 +160,7 @@ class Test_Kappa_For_Lambda_Between_Half_and_One(unittest.TestCase):
                 self.assertAlmostEqual(self.proj.kappa(0, r), expected_val, 5)
 
 
+
 class Test_Kappa_For_Lambda_Less_Than_Half(unittest.TestCase):
 
     def setUp(self) -> None:
@@ -111,21 +197,26 @@ class Test_Kappa_For_Lambda_Less_Than_Half(unittest.TestCase):
         self.assertAlmostEqual(self.proj.kappa(x, r), 0.0, 5)
 
 
+
 class Test_Lambda_One(unittest.TestCase):
 
     def setUp(self):
         self.proj = conicsp.Projector(lambda_ = 1.0)
 
     def test_single_image_is_projected_to_the_original_point(self):
-        coord_vals = (-1, 0 ,1)
-        test_points = []
+        coord_vals = {-1, 0 ,1}
+        test_points: list[Point] = list()
         for x in coord_vals:
             for y in coord_vals:
                 for z in coord_vals:
-                    test_points.append((x,y,z))
+                    test_points.append(Point(x,y,z))
         for p in test_points:
             with self.subTest(point = p):
-                self.assertListEqual(self.proj.point(p), [p])
+                i = self.proj.point(p)[0]
+                self.assertAlmostEqual(i.x, p.x, 5)
+                self.assertAlmostEqual(i.y, p.y, 5)
+                self.assertAlmostEqual(i.z, p.z, 5)
+
 
 
 class Test_Lambda_Two(unittest.TestCase):
@@ -134,22 +225,77 @@ class Test_Lambda_Two(unittest.TestCase):
         self.proj = conicsp.Projector(lambda_=2.0)
 
     def test_points_on_x_axis_are_projected_on_themselves(self):
-        points = [(2,0,0), (1,0,0), (0,0,0), (-1,0,0)]
+        points = Point.from_xyz((2,0,0), (1,0,0), (0,0,0), (-1,0,0))
         for p in points:
             with self.subTest(point = p):
                 self.assertListEqual(self.proj.point(p), [p])
 
     def test_points_on_y_axis_with_base_plane_angle_set_to_0_are_projected_onto_themselves(self):
-        points = [(0,0,0), (0,1,0), (0,-1,0), (0,2,0)]
+        points = Point.from_xyz((0,1,0), (0,5,0), (0,2,0))
         for p in points:
             with self.subTest(point = p):
                 self.assertListEqual(self.proj.point(p, base=0), [p])
 
-    def test_points_on_z_axis_with_base_plane_angle_set_to_pi_are_projected_onto_themselves(self):
-        points = [(0,0,0), (0,0,1), (0,0,-1), (0,0,-2)]
+    def test_points_on_positive_z_axis_with_base_plane_angle_set_to_pi_half_are_projected_onto_themselves(self):
+        points = Point.from_xyz((0,0,1), (0,0,5), (0,0,2))
         for p in points:
             with self.subTest(point = p):
-                self.assertListEqual(self.proj.point(p, base=pi), [p])
+                i = self.proj.point(p, base=pi/2)[0]
+                self.assertAlmostEqual(i.x, p.x, 5)
+                self.assertAlmostEqual(i.y, p.y, 5)
+                self.assertAlmostEqual(i.z, p.z, 5)
+
+    def test_points_on_y_axis_with_base_plane_angle_set_to_pi_are_projected_onto_z_axis_anticlockwise(self):
+        points = Point.from_xyz((0,1,0), (0,-1,0), (0,2,0))
+        images = Point.from_xyz((0,0,1), (0,0,-1), (0,0,2))
+        for p, i in zip(points, images):
+            with self.subTest(point = p):
+                # y component is equal to z component of image
+                self.assertAlmostEqual(i.x, p.x, 5)
+                self.assertAlmostEqual(i.y, 0, 5)
+                self.assertAlmostEqual(i.z, p.y, 5)
+
+    def test_points_on_positive_y_axis_with_zero_revolutions_with_base_angle_minus_pi_are_projected_onto_negative_z(self):
+        points = (Point(0,1,0), Point(0,5,0), Point(0,2,0))
+        for p in points:
+            with self.subTest(point = p):
+                i = self.proj.point(p, base=-pi)[0]
+                self.assertAlmostEqual(i.x, p.x, 5)
+                self.assertAlmostEqual(i.y, 0, 5)
+                self.assertAlmostEqual(i.z, -p.y, 5)
+
+    def test_points_on_positive_y_axis_with_minus_one_revolution_with_base_angle_minus_pi_are_projected_onto_positive_z(self):
+        points = (Point(0,1,0,-1), Point(0,5,0,-1), Point(0,2,0,-1))
+        for p in points:
+            with self.subTest(point = p):
+                i = self.proj.point(p, base=-pi)[0]
+                self.assertAlmostEqual(i.x, p.x, 5)
+                self.assertAlmostEqual(i.y, 0, 5)
+                self.assertAlmostEqual(i.z, p.y, 5)
+
+    def test_point_on_negative_z_with_one_revolution_with_base_angle_pi_half_is_projected_onto_y_clockwise(self):
+        point = Point(0,0,-2,1)
+        i = self.proj.point(point, base=pi/2)[0]
+        self.assertAlmostEqual(i.y, -2, 5)
+        self.assertAlmostEqual(i.z, 0, 5)
+
+    def test_point_on_negative_z_with_zero_revolutions_with_base_angle_pi_half_is_projected_onto_y_anticlockwise(self):
+        point = Point(0,0,-2,0)
+        i = self.proj.point(point, base=pi/2)[0]
+        self.assertAlmostEqual(i.y, 2, 5)
+        self.assertAlmostEqual(i.z, 0, 5)
+
+    def test_point_on_positive_z_with_zero_revolutions_with_base_angle_minus_pi_half_is_projected_onto_y_clockwise(self):
+        point = Point(0,0,2,0)
+        i = self.proj.point(point, base=-pi/2)[0]
+        self.assertAlmostEqual(i.y, 2, 5)
+        self.assertAlmostEqual(i.z, 0, 5)
+
+    def test_point_on_positive_z_with_minus_one_revolution_with_base_angle_minus_pi_half_is_projected_onto_y_anticlockwise(self):
+        point = Point(0,0,2,-1)
+        i = self.proj.point(point, base=-pi/2)[0]
+        self.assertAlmostEqual(i.y, -2, 5)
+        self.assertAlmostEqual(i.z, 0, 5)
 
 
 if __name__=="__main__":
