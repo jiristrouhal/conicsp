@@ -19,7 +19,7 @@ class Test_Angles(unittest.TestCase):
         self.assertAlmostEqual(Point(0,1,0).omega, 0)
         self.assertAlmostEqual(Point(0,1,0).phi, pi/2)
 
-        self.assertAlmostEqual(Point(0,-1,0).omega, 0)
+        self.assertAlmostEqual(Point(0,-1,0).omega, pi)
         self.assertAlmostEqual(Point(0,-1,0).phi, -pi/2)
 
         self.assertAlmostEqual(Point(0,0,1).omega, pi/2)
@@ -31,13 +31,13 @@ class Test_Angles(unittest.TestCase):
         self.assertAlmostEqual(Point(0,1,1).omega, pi/4)
         self.assertAlmostEqual(Point(0,1,1).phi, pi/2)
 
-        self.assertAlmostEqual(Point(0,-1,1).omega, pi/4)
+        self.assertAlmostEqual(Point(0,-1,1).omega, 3*pi/4)
         self.assertAlmostEqual(Point(0,-1,1).phi, -pi/2)
 
         self.assertAlmostEqual(Point(0,1,-1).omega, -pi/4)
         self.assertAlmostEqual(Point(0,1,-1).phi, pi/2)
 
-        self.assertAlmostEqual(Point(0,-1,-1).omega, -pi/4)
+        self.assertAlmostEqual(Point(0,-1,-1).omega, -3*pi/4)
         self.assertAlmostEqual(Point(0,-1,-1).phi, -pi/2)
 
         self.assertAlmostEqual(Point(1,0,1).omega, pi/2)
@@ -49,7 +49,7 @@ class Test_Angles(unittest.TestCase):
         self.assertAlmostEqual(Point(1,1,0).omega, 0)
         self.assertAlmostEqual(Point(1,1,0).phi, pi/4)
 
-        self.assertAlmostEqual(Point(1,-1,0).omega, 0)
+        self.assertAlmostEqual(Point(1,-1,0).omega, pi)
         self.assertAlmostEqual(Point(1,-1,0).phi, -pi/4)
 
 

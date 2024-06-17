@@ -196,7 +196,6 @@ class Test_Lambda_One(unittest.TestCase):
                 self.assertAlmostEqual(i.z, p.z, 5)
 
 
-
 class Test_Lambda_Two(unittest.TestCase):
 
     def setUp(self) -> None:

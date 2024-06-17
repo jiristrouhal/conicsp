@@ -29,10 +29,10 @@ class Point:
     @property
     def omega(self) -> float:
         """Angle between base plane and the plane defined by this point and the x axis."""
-        if self.y != 0:
-            return sgn(self.y)*atan(self.z/self.y)
+        if self.z==0:
+            return 0 if self.y>=0 else pi
         else:
-            return sgn(self.z) * pi/2
+            return  sgn(self.z)*acos(self.y/sqrt(self.y**2+self.z**2))
 
     @property
     def phi(self) -> float:
@@ -92,11 +92,7 @@ class Projector:
 
     def point(self, point: Point, base: float = 0) -> Point:
         point1 = rot_yz(point, -base)
-        if point1.y >= 0:
-            omega_extended = point1.omega
-        else:
-            omega_extended = (pi - point1.omega)
-        return rot_yz(point1, base + omega_extended/self._lambda - omega_extended)
+        return rot_yz(point1, base + point1.omega/self._lambda - point1.omega)
 
     def kappa(self, x: float, radius: float) -> float:
         if radius == 0:
