@@ -42,7 +42,7 @@ class Point:
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Point):
-            raise TypeError
+            raise TypeError(f"Equality between point and {type(other)} is not defined.")
         dist_squared = (other.x-self.x)**2 + (other.y-self.y)**2 + (other.z-self.z)**2
         return dist_squared <= TOLERANCE**2 and self.rev==other.rev
 
@@ -68,14 +68,13 @@ class Projector:
     def lambda_(self) -> float:
         return self._lambda
 
-    def point(self, point: Point, base: float = 0, limit: bool = False) -> list[Point]:
+    def point(self, point: Point, base: float = 0) -> Point:
         point1 = rot(point, -base, rev_=False)
-        omega = point1.omega
-        point_1a = rot(point1, -omega)
-
-        point1 = rot(point_1a, omega/self._lambda)
-        point = rot(point1, base, rev_=False)
-        return [point]
+        if point1.y >= 0:
+            omega_extended = point1.omega
+        else:
+            omega_extended = (pi - point1.omega)
+        return rot(point1, base + omega_extended/self._lambda - omega_extended)
 
     def kappa(self, x: float, radius: float) -> float:
         if radius == 0:
