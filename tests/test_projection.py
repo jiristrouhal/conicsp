@@ -2,37 +2,69 @@ import unittest
 from math import pi, tan, sqrt
 
 import conicsp
-from conicsp import Point, rot
+from conicsp import Point, rot_yz, rot_xy
 
-class Test_Point_Rotation(unittest.TestCase):
+
+def xyz_almost_equal(
+    case: unittest.TestCase,
+    first: tuple[float,float,float],
+    second: tuple[float,float,float]
+) -> None:
+
+    for x, x_ in zip(first, second):
+        case.assertAlmostEqual(x, x_)
+
+
+class Test_Point_Rotation_In_YZ(unittest.TestCase):
 
     def test_rotating_origin_has_no_effect(self):
         x = Point(0,0,0)
-        self.assertEqual(rot(x, 0).xyz, (0,0,0))
-        self.assertEqual(rot(x, pi/2).xyz, (0,0,0))
-        self.assertEqual(rot(x, -pi/2).xyz, (0,0,0))
+        self.assertEqual(rot_yz(x, 0).xyz, (0,0,0))
+        self.assertEqual(rot_yz(x, pi/2).xyz, (0,0,0))
+        self.assertEqual(rot_yz(x, -pi/2).xyz, (0,0,0))
 
     def test_rotating_point_with_zero_y_and_z_has_no_effect(self):
         x = Point(1,0,0)
-        self.assertEqual(rot(x, 0).xyz, (1,0,0))
-        self.assertEqual(rot(x, pi/2).xyz, (1,0,0))
-        self.assertEqual(rot(x, -pi/2).xyz, (1,0,0))
+        xyz_almost_equal(self, rot_yz(x, 0).xyz, (1,0,0))
+        xyz_almost_equal(self, rot_yz(x, pi/2).xyz, (1,0,0))
+        xyz_almost_equal(self, rot_yz(x, -pi/2).xyz, (1,0,0))
 
-    def test_rotating_point_without_increasing_revolutions(self):
-        self.assertEqual(rot(Point(0,0,1), pi/4), Point(0,-1/sqrt(2),1/sqrt(2)))
-        self.assertEqual(rot(Point(0,1,0), pi/2), Point(0,0,1))
-        self.assertEqual(rot(Point(0,1,1), pi/2), Point(0,-1,1))
-        self.assertEqual(rot(Point(0,1,1), -pi), Point(0,-1,-1))
-        self.assertEqual(rot(Point(0,1,0), -pi), Point(0,-1,0))
+    def test_rotating_point(self):
+        self.assertEqual(rot_yz(Point(0,0,1), pi/4), Point(0,-1/sqrt(2),1/sqrt(2)))
+        self.assertEqual(rot_yz(Point(0,1,0), pi/2), Point(0,0,1))
+        self.assertEqual(rot_yz(Point(0,1,1), pi/2), Point(0,-1,1))
+        self.assertEqual(rot_yz(Point(0,1,1), -pi), Point(0,-1,-1))
+        self.assertEqual(rot_yz(Point(0,1,0), -pi), Point(0,-1,0))
+
+
+class Test_Point_Rotation_In_XY(unittest.TestCase):
+
+    def test_rotating_origin_has_no_effect(self):
+        x = Point(0,0,0)
+        self.assertEqual(rot_xy(x, 0).xyz, (0,0,0))
+        self.assertEqual(rot_xy(x, pi/2).xyz, (0,0,0))
+        self.assertEqual(rot_xy(x, -pi/2).xyz, (0,0,0))
+
+    def test_rotating_point_with_zero_x_and_y_has_no_effect(self):
+        p = Point(0,0,1)
+        self.assertEqual(rot_xy(p, 0).xyz, (0,0,1))
+        self.assertEqual(rot_xy(p, pi/2).xyz, (0,0,1))
+        self.assertEqual(rot_xy(p, -pi/2).xyz, (0,0,1))
+
+    def test_rotating_point_without_changing_revolutions(self):
+        self.assertEqual(rot_xy(Point(0,1,0), pi/4), Point(-1/sqrt(2),1/sqrt(2),0))
+        self.assertEqual(rot_xy(Point(1,0,0), pi/2), Point(0,1,0))
+        self.assertEqual(rot_xy(Point(1,1,0), pi/2), Point(-1,1,0))
+        self.assertEqual(rot_xy(Point(1,1,0), -pi), Point(-1,-1,0))
+        self.assertEqual(rot_xy(Point(1,0,0), -pi), Point(-1,0,0))
 
     def test_rotating_point_with_changing_revolutions(self):
-        self.assertEqual(rot(Point(0,1,0), pi), Point(0,-1,0,1))
-        self.assertEqual(rot(Point(0,1,0), 3*pi), Point(0,-1,0,2))
-        self.assertEqual(rot(Point(0,1,0), -3*pi), Point(0,-1,0,-1))
-        self.assertEqual(rot(Point(0,0,1), pi), Point(0,0,-1,1))
-        self.assertEqual(rot(Point(0,0,-1), 3*pi), Point(0,0,1,1))
-        self.assertEqual(rot(Point(0,0,-1), -pi), Point(0,0,1,-1))
-
+        self.assertEqual(rot_xy(Point(0,1,0), 2*pi), Point(0,1,0,1))
+        self.assertEqual(rot_xy(Point(0,1,0), -2*pi), Point(0,1,0,-1))
+        self.assertAlmostEqual(rot_xy(Point(0,1,0), 3*pi), Point(0,-1,0,1))
+        self.assertAlmostEqual(rot_xy(Point(1,0,0), 3*pi), Point(-1,0,0,1))
+        self.assertAlmostEqual(rot_xy(Point(1,0,0, 2), -5*pi), Point(-1,0,0,0))
+        self.assertAlmostEqual(rot_xy(Point(1,0,0, 2), -5/2*pi), Point(0,-1,0,1))
 
 
 class Test_Kappa_For_Lambda_One(unittest.TestCase):
@@ -190,7 +222,6 @@ class Test_Lambda_Two(unittest.TestCase):
                 self.assertAlmostEqual(i.x, p.x, 5)
                 self.assertAlmostEqual(i.y, p.y, 5)
                 self.assertAlmostEqual(i.z, p.z, 5)
-
 
     def test_point_on_positive_y_with_with_base_pi_is_projected_onto_negative_z(self):
         point = Point(0,2,0)
