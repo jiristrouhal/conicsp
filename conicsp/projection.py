@@ -1,5 +1,5 @@
 from __future__ import annotations
-from math import sqrt, acos, sin, cos, pi, floor
+from math import sqrt, acos, sin, cos, pi, floor, atan
 import dataclasses
 
 
@@ -19,15 +19,26 @@ class Point:
     @property
     def xyz(self) -> tuple[float,float,float]:
         return self.x, self.y, self.z
+    @property
+    def r(self) -> float:
+        return sqrt(self.x**2 + self.y**2 + self.z**2)
 
     @property
     def omega(self) -> float:
-        omega = 0.0
-        if self.z != 0:
-            omega = sgn(self.z)*acos(self.y/sqrt(self.y**2+self.z**2))
+        if self.y != 0:
+            return sgn(self.y)*atan(self.z/self.y)
         else:
-            omega = -pi if self.y < 0 else 0
-        return omega + 2*pi*self.rev
+            return sgn(self.z) * pi/2
+
+    @property
+    def phi(self) -> float:
+        phi = 0.0
+        if self.y==0 and self.z==0:
+            phi = 0 if self.x>=0 else -pi
+        else:
+            phi = sgn_0plus(self.y) * acos(self.x/self.r)
+        return phi + 2*pi*self.rev
+
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Point):
@@ -42,6 +53,10 @@ class Point:
 
 def sgn(x: float) -> int:
     return 1 if x>0 else (-1 if x<0 else 0)
+
+
+def sgn_0plus(x: float) -> int:
+    return 1 if x>=0 else -1
 
 
 class Projector:
