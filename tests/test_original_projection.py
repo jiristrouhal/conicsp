@@ -114,27 +114,27 @@ class Test_Lambda_Two(unittest.TestCase):
                 self.assertAlmostEqual(i.z, p.z, 5)
 
     def test_point_on_positive_y_with_with_base_minus_pi_is_projected_onto_negative_z(self):
-        point = Point(0,2,0)
+        point = Point(-2/sqrt(3),2,0)
         image = self.proj.point(point, base=-pi)
         self.assertAlmostEqual(image.x, point.x, 5)
         self.assertAlmostEqual(image.y, 0, 5)
         self.assertAlmostEqual(image.z, -2, 5)
 
     def test_point_on_positive_y_with_with_base_pi_is_projected_onto_positive_z(self):
-        point = Point(0,2,0)
+        point = Point(-2/sqrt(3),2,0)
         image = self.proj.point(point, base=-pi)
         self.assertAlmostEqual(image.x, point.x, 5)
         self.assertAlmostEqual(image.y, 0, 5)
         self.assertAlmostEqual(image.z, -2, 5)
 
     def test_point_on_negative_z_with_with_base_angle_pi_half_is_projected_onto_y_anticlockwise(self):
-        point = Point(0,0,-2)
+        point = Point(-2/sqrt(3),0,-2)
         i = self.proj.point(point, base=pi/2)
         self.assertAlmostEqual(i.y, 2, 5)
         self.assertAlmostEqual(i.z, 0, 5)
 
     def test_point_on_positive_z_with_with_base_minus_pi_half_is_projected_onto_positive_y(self):
-        point = Point(0,0,2,0)
+        point = Point(-2/sqrt(3),0,2,0)
         i = self.proj.point(point, base=-pi/2)
         self.assertAlmostEqual(i.y, 2, 5)
         self.assertAlmostEqual(i.z, 0, 5)
