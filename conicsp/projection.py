@@ -91,8 +91,17 @@ class Projector:
         return self._lambda
 
     def point(self, point: Point, base: float = 0) -> Point:
+        # align to base
         point1 = rot_yz(point, -base)
-        return rot_yz(point1, base + point1.omega/self._lambda - point1.omega)
+        # align to points plane
+        omega = point1.omega
+        point2 = rot_yz(point1, -omega)
+        if point2.y==0:
+            kappa = 1.0
+        else:
+            kappa = self.kappa(point2.x, abs(point2.y))
+        point1a = rot_yz(point2, omega/kappa)
+        return rot_yz(point1a, base)
 
     def kappa(self, x: float, radius: float) -> float:
         if radius == 0:
@@ -100,11 +109,10 @@ class Projector:
                 return 1
             else:
                 raise ValueError("Cannot compute scaling of circle of radius zero behing singularity and non-unit lambda.")
-        elif x==0:
-            return self._lambda * sin(pi/(2*self._lambda))
         else:
-            c = sqrt(radius**2 + x**2) / radius
-            s = x / sqrt(radius**2 + x**2)
+            q = sqrt(radius**2 + x**2)
+            c = q / radius
+            s = x / q
             return self._lambda*c*sin(acos(s)/self._lambda)
 
 
