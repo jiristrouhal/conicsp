@@ -89,18 +89,29 @@ class Test_Limiting_Azimuth(unittest.TestCase):
                 self.assertEqual(limit_azimuth(az, gamma), az)
 
 
-# class Test_Limiting_Azimuth_In_Projecting_Point(unittest.TestCase):
+class Test_Limiting_Azimuth_In_Projecting_Point(unittest.TestCase):
 
-#     def setUp(self) -> None:
-#         self.proj = conicsp.Projector(lambda_=2.0)
+    def setUp(self) -> None:
+        self.proj = conicsp.Projector(lambda_=2.0)
 
-#     def test_point_falling_into_unobservable_section_of_the_space_is_projected_behind_origin(self):
-#         point = Point(-sqrt(2)/2, sqrt(2)/2, 0, 1)
-#         image = self.proj.point(point, base=pi)
-#         self.assertAlmostEqual(image.y, 0)
+    def test_point_falling_into_observable_section_of_the_space_is_projected_to_its_position(self):
+        point = Point(-sqrt(2)/2, -sqrt(2)/2, 0, 0)
+        image = self.proj.point(point, base=pi)
+        self.assertAlmostEqual(image.y, -sqrt(2)/2)
+
+        point = Point(-sqrt(2)/2, sqrt(2)/2, 0, 0)
+        image = self.proj.point(point, base=0)
+        self.assertAlmostEqual(image.y, sqrt(2)/2)
+
+    def test_point_falling_into_unobservable_section_of_the_space_is_projected_behind_origin(self):
+        point = Point(-sqrt(2)/2, -sqrt(2)/2, 0, 1)
+        image = self.proj.point(point, base=pi)
+        self.assertAlmostEqual(image.y, 0)
+
+        point = Point(-sqrt(2)/2, sqrt(2)/2, 0, 1)
+        image = self.proj.point(point, base=0)
+        self.assertAlmostEqual(image.y, 0)
 
 
 if __name__=="__main__":  # pragma: no cover
-    # runner = unittest.TextTestRunner()
-    # runner.run(Test_Limiting_Azimuth("test_point_falling_into_unobservable_section_of_the_space_is_projected_behind_origin"))
     unittest.main()

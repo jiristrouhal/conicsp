@@ -103,10 +103,11 @@ class Projector:
             kappa = self.kappa(point2.x, abs(point2.y))
 
         # limit phi
-        # point3 = rot_xy(point2, -phi)
-        # point4 = rot_xy(point3, phi)
+        point3 = rot_xy(point2, -phi)
+        phi = limit_azimuth(phi, 2*pi*self._lambda)
+        point4 = rot_xy(point3, phi)
 
-        point1a = rot_yz(point2, omega/kappa)
+        point1a = rot_yz(point4, omega/kappa)
         return rot_yz(point1a, base)
 
     def kappa(self, x: float, radius: float) -> float:
