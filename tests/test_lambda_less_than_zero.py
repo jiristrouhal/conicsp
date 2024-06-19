@@ -52,5 +52,5 @@ class Test_Lambda_Two(unittest.TestCase):
         xyz_almost_equal(self,self.proj.point(point, base=pi/2).xyz, (7/sqrt(3),0,7))
 
 
-if __name__=="__main__":
+if __name__=="__main__":  # pragma: no cover
     unittest.main()

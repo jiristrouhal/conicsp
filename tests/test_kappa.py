@@ -112,5 +112,5 @@ class Test_Kappa_For_Lambda_Less_Than_Half(unittest.TestCase):
         self.assertAlmostEqual(self.proj.kappa(x, r), 0.0, 5)
 
 
-if __name__=="__main__":
+if __name__=="__main__":  # pragma: no cover
     unittest.main()
