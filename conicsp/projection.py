@@ -95,11 +95,17 @@ class Projector:
         point1 = rot_yz(point, -base)
         # align to points plane
         omega = point1.omega
+        phi = point1.phi
         point2 = rot_yz(point1, -omega)
         if point2.y==0:
             kappa = 1.0
         else:
             kappa = self.kappa(point2.x, abs(point2.y))
+
+        # limit phi
+        # point3 = rot_xy(point2, -phi)
+        # point4 = rot_xy(point3, phi)
+
         point1a = rot_yz(point2, omega/kappa)
         return rot_yz(point1a, base)
 
@@ -115,6 +121,15 @@ class Projector:
             s = x / q
             return self._lambda*c*sin(acos(s)/self._lambda)
 
+
+def limit_azimuth(phi: float, gamma: float) -> float:
+    s = sgn(phi)
+    phi_0 = phi
+    phi = abs(phi) % gamma
+    if pi<phi<(gamma-pi):
+        return s*pi
+    else:
+        return phi_0
 
 def rot_xy(point: Point, angle: float) -> Point:
     assert isinstance(point, Point)
